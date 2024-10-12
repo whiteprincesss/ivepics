@@ -24,6 +24,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 파일 크기 제한 (5MB)
   fileFilter: (req, file, cb) => {
     const filetypes = /jpeg|jpg|png|gif/; // 허용할 이미지 파일 확장자
     const extname = filetypes.test(
@@ -34,7 +35,7 @@ const upload = multer({
     if (extname && mimetype) {
       return cb(null, true);
     } else {
-      cb("Error: 이미지 파일만 업로드할 수 있습니다."); // 잘못된 파일 형식 처리
+      cb(new Error('이미지 파일만 업로드할 수 있습니다.')); // 잘못된 파일 형식 처리
     }
   },
 });

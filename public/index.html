@@ -8,44 +8,43 @@
         /* 사진 스타일 */
         .photo-container {
             display: flex;
-            flex-wrap: wrap; /* 사진이 여러 줄로 나열되도록 설정 */
-            justify-content: center; /* 사진을 가운데 정렬 */
-            gap: 10px; /* 사진 사이의 간격 */
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
         }
 
         .photo-container img {
-            width: 200px; /* 고정된 너비 */
-            height: 200px; /* 고정된 높이 */
-            object-fit: cover; /* 이미지 비율을 유지하며 크기를 맞춤 */
-            cursor: pointer; /* 클릭 가능하도록 커서 변경 */
-            border: 2px solid #ccc; /* 사진에 테두리 추가 */
-            border-radius: 5px; /* 사진 모서리 둥글게 */
-            transition: transform 0.2s; /* 마우스 오버 시 애니메이션 효과 */
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            transition: transform 0.2s;
         }
 
         .photo-container img:hover {
-            transform: scale(1.05); /* 마우스 오버 시 이미지 확대 */
+            transform: scale(1.05);
         }
 
         /* 모달 스타일 */
         #modal {
-            display: none; /* 기본적으로 숨김 */
-            position: fixed; /* 화면에 고정 */
-            z-index: 1000; /* 다른 요소 위에 표시 */
+            display: none;
+            position: fixed;
+            z-index: 1000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            overflow: auto; /* 내용이 많을 경우 스크롤 가능 */
-            background-color: rgba(0, 0, 0, 0.8); /* 반투명 검정 배경 */
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
         }
 
         #modal img {
             margin: auto;
             display: block;
-            max-width: 80%; /* 모달 안에서 최대 80% 크기 */
-            max-height: 80%; /* 모달 안에서 최대 80% 높이 */
-            transition: transform 0.2s; /* 이미지 확대 애니메이션 */
+            max-width: 80%;
+            max-height: 80%;
         }
 
         .close {
@@ -55,7 +54,7 @@
             color: white;
             font-size: 35px;
             font-weight: bold;
-            cursor: pointer; /* 클릭 가능하도록 커서 변경 */
+            cursor: pointer;
         }
 
         .download-btn {
@@ -66,12 +65,11 @@
             background-color: blue;
             border: none;
             border-radius: 5px;
-            cursor: pointer; /* 클릭 가능하도록 커서 변경 */
         }
 
         .error {
-            color: red; /* 에러 메시지 색상 */
-            text-align: center; /* 중앙 정렬 */
+            color: red;
+            text-align: center;
         }
     </style>
 </head>
@@ -92,14 +90,14 @@
     <br><br>
     <button id="uploadButton">사진 업로드하기</button>
 
-    <div class="photo-container" id="photoContainer"></div> <!-- 사진을 보여줄 컨테이너 -->
-    <div class="error" id="errorMessage"></div> <!-- 에러 메시지 표시 영역 -->
+    <div class="photo-container" id="photoContainer"></div>
+    <div class="error" id="errorMessage"></div>
 
     <!-- 모달 -->
     <div id="modal">
         <span class="close" id="closeModal">&times;</span>
         <img id="modalImage" src="" alt="큰 이미지">
-        <a id="downloadLink" class="download-btn" download>다운로드</a> <!-- 다운로드 버튼 -->
+        <a id="downloadLink" class="download-btn" download>다운로드</a>
     </div>
 
     <script>
@@ -108,60 +106,47 @@
         const errorMessage = document.getElementById('errorMessage');
         const downloadLink = document.getElementById('downloadLink');
 
-        // 사진 가져오기 함수
         const fetchPhotos = (tag) => {
             fetch(tag ? `/photos/${tag}` : '/photos')
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('사진을 가져오는 중 오류가 발생했습니다.');
-                    }
+                    if (!response.ok) throw new Error('사진을 가져오는 중 오류가 발생했습니다.');
                     return response.json();
                 })
                 .then(data => {
-                    errorMessage.textContent = ''; // 에러 메시지 초기화
-                    photoContainer.innerHTML = ''; // 기존 사진 제거
-                    // 최신 사진이 왼쪽으로 나열되도록 배열을 역순으로 정렬
+                    errorMessage.textContent = '';
+                    photoContainer.innerHTML = '';
                     data.reverse().forEach(photo => {
                         const img = document.createElement('img');
                         img.src = photo.filepath;
                         img.alt = photo.tags;
-                        img.onclick = () => showModal(photo.filepath); // 클릭 시 모달 표시
+                        img.onclick = () => showModal(photo.filepath);
                         photoContainer.appendChild(img);
                     });
                 })
                 .catch(error => {
                     console.error('Error fetching photos:', error);
-                    errorMessage.textContent = error.message; // 에러 메시지 표시
+                    errorMessage.textContent = error.message;
                 });
         };
 
-        // 모달 표시 함수
         const showModal = (src) => {
             const modal = document.getElementById('modal');
             const modalImage = document.getElementById('modalImage');
             modalImage.src = src;
-            downloadLink.href = src; // 다운로드 링크 설정
-            modal.style.display = 'block'; // 모달 표시
+            downloadLink.href = src;
+            modal.style.display = 'block';
         };
 
-        // 모달 닫기 함수
         const closeModal = () => {
-            const modal = document.getElementById('modal');
-            modal.style.display = 'none'; // 모달 숨김
+            document.getElementById('modal').style.display = 'none';
         };
 
-        // 태그 필터 변경 시 사진 재가져오기
-        tagFilter.addEventListener('change', (e) => {
-            const tag = e.target.value;
-            fetchPhotos(tag);
-        });
+        tagFilter.addEventListener('change', (e) => fetchPhotos(e.target.value));
 
-        // 업로드 버튼 클릭 시 업로드 페이지로 이동
         document.getElementById('uploadButton').addEventListener('click', () => {
-            window.location.href = '/upload'; // 업로드 페이지로 이동
+            window.location.href = '/upload';
         });
 
-        // 모달 닫기 이벤트
         document.getElementById('closeModal').addEventListener('click', closeModal);
 
         // 초기 사진 가져오기
