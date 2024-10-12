@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIC UPLOAD</title>
+    <link rel="stylesheet" href="styles.css"> <!-- 합쳐진 CSS 파일 연결 -->
+</head>
+<body>
+    <h1>사진 업로드하기</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" required>
+        <h2>태그 선택하기:</h2>
+        <label><input type="checkbox" name="tags" value="Yujin"> Yujin</label>
+        <label><input type="checkbox" name="tags" value="Gaeul"> Gaeul</label>
+        <label><input type="checkbox" name="tags" value="Rei"> Rei</label>
+        <label><input type="checkbox" name="tags" value="Wonyoung"> Wonyoung</label>
+        <label><input type="checkbox" name="tags" value="Liz"> Liz</label>
+        <label><input type="checkbox" name="tags" value="Leeseo"> Leeseo</label>
+        <button type="submit">업로드</button>
+    </form>
+
+    <div class="uploaded-images" id="uploadedImages"></div> <!-- 업로드된 이미지 표시 영역 -->
+
+    <script src="scripts.js"></script> <!-- 합쳐진 JavaScript 파일 연결 -->
+</body>
+</html>
