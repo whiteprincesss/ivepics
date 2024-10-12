@@ -58,7 +58,7 @@
         document.getElementById('uploadForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            // 선택된 태그를 가져오기
+            // 선택된 태그를 가져오기 
             const tags = Array.from(this.querySelectorAll('input[name="tags"]:checked')).map(checkbox => checkbox.value);
             
             // 태그가 선택되었는지 확인
