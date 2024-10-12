@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IVE PICS </title>
+    <style>
+        /* 사진 스타일 */
+        .photo-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .photo-container img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            transition: transform 0.2s;
+        }
+
+        .photo-container img:hover {
+            transform: scale(1.05);
+        }
+
+        /* 모달 스타일 */
+        #modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        #modal img {
+            margin: auto;
+            display: block;
+            max-width: 80%;
+            max-height: 80%;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 25px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .download-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            color: white;
+            background-color: blue;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1><i>IVE Gallery</i></h1>
+    
+    <h2>태그 선택하기:</h2>
+    <select id="tagFilter">
+        <option value="">모든 사진</option>
+        <option value="Yujin">Yujin</option>
+        <option value="Gaeul">Gaeul</option>
+        <option value="Rei">Rei</option>
+        <option value="Wonyoung">Wonyoung</option>
+        <option value="Liz">Liz</option>
+        <option value="Leeseo">Leeseo</option>
+    </select>
+
+    <br><br>
+    <button id="uploadButton">사진 업로드하기</button>
+
+    <div class="photo-container" id="photoContainer"></div>
+    <div class="error" id="errorMessage"></div>
+
+    <!-- 모달 -->
+    <div id="modal">
+        <span class="close" id="closeModal">&times;</span>
+        <img id="modalImage" src="" alt="큰 이미지">
+        <a id="downloadLink" class="download-btn" download>다운로드</a>
+    </div>
+
+    <script>
+        const photoContainer = document.getElementById('photoContainer');
+        const tagFilter = document.getElementById('tagFilter');
+        const errorMessage = document.getElementById('errorMessage');
+        const downloadLink = document.getElementById('downloadLink');
+
+        const fetchPhotos = (tag) => {
+            fetch(tag ? `/photos/${tag}` : '/photos')
+                .then(response => {
+                    if (!response.ok) throw new Error('사진을 가져오는 중 오류가 발생했습니다.');
+                    return response.json();
+                })
+                .then(data => {
+                    errorMessage.textContent = '';
+                    photoContainer.innerHTML = '';
+                    data.reverse().forEach(photo => {
+                        const img = document.createElement('img');
+                        img.src = photo.filepath;
+                        img.alt = photo.tags;
+                        img.onclick = () => showModal(photo.filepath);
+                        photoContainer.appendChild(img);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching photos:', error);
+                    errorMessage.textContent = error.message;
+                });
+        };
+
+        const showModal = (src) => {
+            const modal = document.getElementById('modal');
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = src;
+            downloadLink.href = src;
+            modal.style.display = 'block';
+        };
+
+        const closeModal = () => {
+            document.getElementById('modal').style.display = 'none';
+        };
+
+        tagFilter.addEventListener('change', (e) => fetchPhotos(e.target.value));
+
+        document.getElementById('uploadButton').addEventListener('click', () => {
+            window.location.href = '/upload';
+        });
+
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+
+        // 초기 사진 가져오기
+        fetchPhotos();
+    </script>
+</body>
+</html>
